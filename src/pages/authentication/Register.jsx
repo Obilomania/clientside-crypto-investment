@@ -1,48 +1,117 @@
 import MainLayout from "../../components/layout/MainLayout";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { registerNewUser } from "../../redux/user/userService";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import Loader from "../../components/Loader";
 
 
-
+const initialState = {
+  fullname: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  agree: "",
+  btcWallet: "",
+  openPassword: "",
+  userPromoCode: "",
+};
 
 const Register = () => {
+  const [reveal, setReveal] = useState(false);
+  const toggleReveal = () => setReveal(!reveal);
+  const [isLoading, setisLoading] = useState(false)
+  const [isChecked, setChecked] = useState(false);
+  const [registerInfo, setRegisterInfo] = useState(initialState);
+  const {
+    fullname,
+    email,
+    password,
+    confirmPassword,
+    btcWallet,
+    userPromoCode,
+  } = registerInfo;
+  const navigate = useNavigate()
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setRegisterInfo({ ...registerInfo, [name]: value });
+  };
+
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!registerInfo.fullname || !registerInfo.email || !registerInfo.password || !registerInfo.confirmPassword || !registerInfo.btcWallet) {
+      return toast.error("Please fill all fields Bro");
+    } else if (registerInfo.password !== registerInfo.confirmPassword) {
+      return toast.error("Password is not a Match");
+    } else if (!isChecked) {
+      return toast.error("Please agree to our terms and conditions");
+    }
+    setisLoading(true)
+    const formData = new FormData();
+    formData.append("fullname", fullname);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("confirmPassword", password);
+    formData.append("openPassword", password);
+    formData.append("btcWallet", btcWallet);
+    formData.append("userPromoCode", userPromoCode);
+    await registerNewUser(formData)
+    // navigate("/")
+    setisLoading(false)
+  };
   return (
     <MainLayout>
+      {isLoading && <Loader />}
       <RegPage>
         <div className="overlay"></div>
         {/* <video className="video" src={Background} autoPlay loop muted /> */}
         <div className="auth-content">
           <h1 className="heading">Register New Account</h1>
-          <form >
+          <form onSubmit={handleSubmit}>
             <input
               type="text"
               placeholder="Full Name *"
               name="fullname"
+              value={registerInfo.fullname}
+              onChange={(e) => handleInput(e)}
             />
             <input
               type="email"
               placeholder="Email *"
               name="email"
+              value={registerInfo.email}
+              onChange={(e) => handleInput(e)}
             />
             <div className="form-input">
               <div className="password">
                 <input
-                  type="password"
+                  type={!reveal ? "password" : "text"}
                   placeholder="Password *"
                   name="password"
+                  value={registerInfo.password}
+                  onChange={(e) => handleInput(e)}
                 />
-                <div className="eye-reveal">
-                  {/* {!reveal ? <AiOutlineEye /> : <AiOutlineEyeInvisible />} */}
+                <div className="eye-reveal" onClick={toggleReveal}>
+                  {!reveal ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
                 </div>
               </div>
               <div className="password">
                 <input
-                  type="password"
+                  type={!reveal ? "password" : "text"}
                   placeholder="Confirm Password *"
                   name="confirmPassword"
+                  value={registerInfo.confirmPassword}
+                  onChange={(e) => handleInput(e)}
                 />
-                <div className="eye-reveal" >
-                  {/* {!reveal ? <AiOutlineEye /> : <AiOutlineEyeInvisible />} */}
+                <div className="eye-reveal" onClick={toggleReveal}>
+                  {!reveal ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
                 </div>
               </div>
             </div>
@@ -50,16 +119,22 @@ const Register = () => {
               type="btcWallet"
               placeholder="BTC Wallet *"
               name="btcWallet"
+              value={registerInfo.btcWallet}
+              onChange={(e) => handleInput(e)}
             />
             <input
               type="userPromoCode"
               placeholder="Referal Code if Any"
               name="userPromoCode"
+              value={registerInfo.userPromoCode}
+              onChange={(e) => handleInput(e)}
             />
             <div className="form-checkbox">
               <input
                 type="checkbox"
                 name="agree"
+                checked={isChecked}
+                onChange={handleCheckboxChange}
               />{" "}
               <p>
                 I agree with &nbsp;
@@ -80,7 +155,7 @@ const Register = () => {
 };
 const RegPage = styled.div`
   width: 100%;
-  height: 80vh;
+  height: 100vh;
   position: relative;
   overflow: hidden;
   video {

@@ -3,11 +3,63 @@ import "moment-timezone";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { FiExternalLink } from "react-icons/fi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { getUserLastDeposit } from "../redux/transactions/transactionService";
+import { user_top_up_time } from "../redux/transactions/transactionSlice";
 
 const Time = () => {
+  const [lastDepos, setLastDepos] = useState('')
   const userAuth = useSelector((state) => state.persistedReducer.auth);
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    async function userlastDeposit() {
+      const res = await getUserLastDeposit()
+      setLastDepos(res)
+    }
+    userlastDeposit();
+  }, [])
+  
+  let lastDepoDate = lastDepos?.createdAt;
+
+  let investmentPlan = lastDepos?.plan;
+  let SilverPlanFigure = 3;
+  let GoldPlanFigure = 5;
+  let PlantinumPlanFigure = 5;
+  let DiamondPlanFigure = 2;
+
+  if (investmentPlan === "Silver") {
+    investmentPlan = SilverPlanFigure;
+  } else if (investmentPlan === "Gold") {
+    investmentPlan = GoldPlanFigure;
+  } else if (investmentPlan === "Plantinum") {
+    investmentPlan = PlantinumPlanFigure;
+  } else if (investmentPlan === "Diamond") {
+    investmentPlan = DiamondPlanFigure;
+  }
+
+
+  const currentDate = new Date(lastDepoDate);
+  console.log(currentDate);
+  const daysLater = new Date(currentDate);
+  daysLater.setDate(currentDate.getDate() + investmentPlan);
+  let duration = daysLater.toLocaleString("en-US", {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    // second: "numeric",
+  });
+
+
+  useEffect(() => {
+    if (duration) {
+      dispatch(user_top_up_time(duration));
+    }
+  }, [dispatch, duration]);
 
   //Time and Greeting and Time note
   let today = new Date();
@@ -39,7 +91,13 @@ const Time = () => {
           </span>
         </h6>
         <div className="duration">
-          <p> TOP UP DUE FOR</p> <span>Sunday</span>
+          {investmentPlan === "Bronze" || !investmentPlan ? (
+            ""
+          ) : (
+            <>
+              <p> TOP UP DUE FOR</p> <span>{duration}</span>
+            </>
+          )}
         </div>
         {/* <h6> AND</h6> */}
       </div>

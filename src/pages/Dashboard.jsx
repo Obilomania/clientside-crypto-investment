@@ -24,7 +24,6 @@ const Dashboard = () => {
       const allUserDeposit = await getAllUserDeposit()
       const userLastWithdrawal = await getUserLastWithdrawal()
       const allUserWithdraw = await getAllUserWithdraw()
-      console.log(userLastWithdrawal)
       
       dispatch(user_account_balance(userBalance));
       dispatch(user_last_deposit(userLastDeposit.amount))

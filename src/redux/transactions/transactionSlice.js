@@ -10,7 +10,7 @@ const initialState = {
   lastWithdrawal: 0,
   withdrawals: [],
   deposits: [],
-  topUpTime: null
+  topUpTime: ''
 
 }
 
@@ -102,6 +102,8 @@ const trnsactionSlice = createSlice({
         state.deposits = deposits
         state.withdrawals = withdrawals
       }
+    }, user_top_up_time: (state, action) => {
+      state.topUpTime = action.payload
     }
   },
 });
@@ -114,7 +116,8 @@ export const {
   user_last_withdrawal,
   user_pending_withdrawal,
   user_total_withdrawal,
-  all_transactions
+  all_transactions,
+  user_top_up_time
 } = trnsactionSlice.actions;
 
 export default trnsactionSlice.reducer

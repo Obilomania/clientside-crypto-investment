@@ -1,32 +1,82 @@
 import MainLayout from "../../components/layout/MainLayout";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { loginUser } from "../../redux/user/userService";
+import Loader from "../../components/Loader";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux"
+import { current_signed_in_user, user_role } from "../../redux/user/userSlice";
 
 
 
+const initialState = {
+  email: "",
+  password: "",
+};
 
 
 
 const Login = () => {
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [loginInfo, setLoginInfo] = useState(initialState);
+  const { email, password } = loginInfo;
+
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setLoginInfo({ ...loginInfo, [name]: value });
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      return toast.error("Please fill all fields");
+    }
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    const response = await loginUser(formData);
+    if (response.fullname) {
+
+      dispatch(current_signed_in_user(response))
+      dispatch(user_role(response.role))
+      navigate("/dashboard");
+      setLoading(false);
+    }
+    setLoading(false);
+  };
+
+
 
 
   return (
     <MainLayout>
+      {loading && <Loader />}
       <LogPage>
         <div className="overlay"></div>
         {/* <video className="video" src={Background} autoPlay loop muted /> */}
         <div className="auth-content">
           <h1 className="heading">Sign Into Your Account</h1>
-          <form>
+          <form onSubmit={handleSubmit}>
             <input
               type="email"
               placeholder="Email *"
-              name="email" />
+              name="email"
+              value={loginInfo.email}
+              onChange={(e) => handleInput(e)}
+            />
             <input
               type="password"
               placeholder="Password *"
-              name="password" />
-
+              name="password"
+              value={loginInfo.password}
+              onChange={(e) => handleInput(e)}
+            />
             <input type="submit" className="submit" value="LOGIN" />
           </form>
           <br />
@@ -45,6 +95,9 @@ const Login = () => {
     </MainLayout>
   );
 };
+
+
+
 
 const LogPage = styled.div`
   width: 100%;

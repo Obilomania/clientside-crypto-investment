@@ -3,8 +3,26 @@ import "moment-timezone";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { FiExternalLink } from "react-icons/fi";
+import { useSelector } from "react-redux";
 
 const Time = () => {
+  const userAuth = useSelector((state) => state.persistedReducer.auth);
+
+
+  //Time and Greeting and Time note
+  let today = new Date();
+ let greeting = () => {
+   if (today.getHours() >= 5 && today.getHours() < 11) {
+     return "Good Morning";
+   } else if (today.getHours() >= 11 && today.getHours() < 17) {
+     return "Good Afternoon";
+   } else if (today.getHours() >= 17 && today.getHours() < 24) {
+     return " Good Evening";
+   } else {
+     return "Wow!!! its late, Why are you Up? ";
+   }
+ };
+
 
   return (
     <Timing>
@@ -13,16 +31,15 @@ const Time = () => {
           <Moment format="hh:mm:ss" interval={1000}></Moment>
         </p>
         <h6 className="heading">
+          {greeting().toUpperCase().toUpperCase()}
           <span>
             <Link to={"/my-profile"}>
-               <FiExternalLink />
+              {userAuth?.currentUser?.fullname} <FiExternalLink />
             </Link>
           </span>
         </h6>
         <div className="duration">
-   
-              <p> TOP UP DUE FOR</p> <span>Sunday</span>
-
+          <p> TOP UP DUE FOR</p> <span>Sunday</span>
         </div>
         {/* <h6> AND</h6> */}
       </div>

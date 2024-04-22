@@ -2,11 +2,19 @@ import MainLayout from "../../components/layout/MainLayout";
 import styled from "styled-components";
 import Time from "../../components/Time";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 
 
 
 const Profile = () => {
+  const userData = useSelector((state) => state.persistedReducer.auth);
+  const userInfo = userData.currentUser
+  const {fullname, email, btcWallet} = userInfo
+
+
+
+
   return (
     <MainLayout>
       <ProfilePage>
@@ -22,25 +30,32 @@ const Profile = () => {
                   type="text"
                   placeholder="John Doe"
                   name="fullname"
+                  value={fullname}
+                  disabled
                 />
               </div>
               <div className="plan-form">
                 <label>
-                  Email Address :<span> (Email cannot be Changed)</span> :
+                  Email Address : :
                 </label>
                 <input
                   type="text"
                   placeholder="Email Address"
+                  value={email}
+                  disabled
                 />
               </div>
 
               <div className="plan-form">
                 <label>
-                  Wallet Address :<span> (Wallet cannot be Changed, contact Admin if you want to change)</span>
+                  Wallet Address :
+                 
                 </label>
                 <input
                   type="text"
                   placeholder="BTC Wallet Address"
+                  value={btcWallet}
+                  disabled
                 />
               </div>
               <div className="profile-CAL">
@@ -142,6 +157,9 @@ const ProfilePage = styled.div`
         padding: 0.2rem 1rem;
       }
     }
+  }
+  input {
+    background: var(--light-black);
   }
   .submit {
     text-decoration: none;

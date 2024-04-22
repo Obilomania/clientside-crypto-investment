@@ -28,6 +28,12 @@ import UserInfoPage from "./pages/Admin/UserInfoPage";
 import AdminEditUserInfo from "./pages/Admin/AdminEditUserInfo";
 import AdminChangeUserPassword from "./pages/Admin/AdminChangeUserPassword";
 import PromoCodes from "./pages/Admin/PromoCodes";
+import AdminAuthComponent from "./components/AdminAuthComponent";
+import AuthComponent from "./components/AuthComponent";
+import AuthNoLogin from "./components/AuthNoLogin";
+import { useDispatch } from "react-redux";
+import { current_user_login_status } from "./redux/user/userSlice";
+import { checkLoginStatus } from "./redux/user/userService";
 
 axios.defaults.withCredentials = true;
 
@@ -43,7 +49,17 @@ export const ScrollToTop = () => {
 
 function App() {
 
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    async function signStatus() {
+      const status = await checkLoginStatus();
+      dispatch(current_user_login_status(status));
+    }
+    signStatus();
+  }, [dispatch]);
+
+  
   return (
     <>
       <BrowserRouter>
@@ -58,7 +74,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
 
           {/* ROUTH FOR AUTHENTICATED USERS */}
-          {/* <Route path="" element={<AuthComponent />}> */}
+          <Route path="" element={<AuthComponent />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/confirm-deposit" element={<DepositConfirmation />} />
             <Route path="/all-my-deposits" element={<MyDeposits />} />
@@ -69,9 +85,9 @@ function App() {
             <Route path="/updateuser" element={<UpdateProfile />} />
             <Route path="/changepassword" element={<ChangePassword />} />
             <Route path="/topUp" element={<TopUp />} />
-          {/* </Route> */}
+          </Route>
 
-          {/* <Route path="" element={<AdminAuthComponent />}> */}
+          <Route path="" element={<AdminAuthComponent />}>
             <Route path="/admin-landing" element={<AdminLanding />} />
             <Route path="/editDeposit/:id" element={<AdminEditDeposit />} />
             <Route path="/getParticularUser/:id" element={<UserInfoPage />} />
@@ -81,10 +97,10 @@ function App() {
               path="/admin-edit-user-Info/:id"
               element={<AdminEditUserInfo />}
             />
-          {/* </Route> */}
+          </Route>
 
           {/* Authentication */}
-          {/* <Route path="" element={<AuthNoLogin />}> */}
+          <Route path="" element={<AuthNoLogin />}>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -92,7 +108,7 @@ function App() {
               path="/resetpassword/:resetToken"
               element={<RecoverPassword />}
             />
-          {/* </Route> */}
+          </Route>
 
           {/* ADMIN */}
         </Routes>

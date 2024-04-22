@@ -1,10 +1,16 @@
+import { useSelector } from "react-redux";
 import { Outlet, Navigate } from "react-router-dom";
 
 const AdminAuthComponent = () => {
-  const userRoleInFo = JSON.parse(localStorage.getItem("role"));
+   const userAuth = useSelector((state) => state.persistedReducer.auth);
 
 
-  return userRoleInFo === "Admin" ? <Outlet /> : <Navigate to={"/"} replace />;
+
+  return userAuth.currentUser.role === "Admin" ? (
+    <Outlet />
+  ) : (
+    <Navigate to={"/"} replace />
+  );
 };
 
 export default AdminAuthComponent;

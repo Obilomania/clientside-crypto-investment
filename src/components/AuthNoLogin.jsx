@@ -1,10 +1,11 @@
+import { useSelector } from "react-redux";
 import { Outlet, Navigate } from "react-router-dom";
 
 const AuthNoLogin = () => {
 
-  const userInfo = JSON.parse(localStorage.getItem("fullname"));
+  const userInfo = useSelector((state) => state.persistedReducer.auth);
 
-  return !userInfo  ? (
+  return userInfo  ? (
     <Outlet />
   ) : (
     <Navigate to={"/"} replace />

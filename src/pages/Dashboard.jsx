@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MainLayout from "../components/layout/MainLayout";
 import styled from "styled-components";
 import Time from "../components/Time";
@@ -7,111 +7,147 @@ import { FaBitcoin } from "react-icons/fa";
 import { TbZoomMoney } from "react-icons/tb";
 import { RiLuggageDepositFill } from "react-icons/ri";
 import { BsCashCoin, BsHourglassSplit } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import { user_account_balance, user_last_deposit, user_last_withdrawal, user_pending_deposit, user_pending_withdrawal, user_total_deposit, user_total_withdrawal } from "../redux/transactions/transactionSlice";
+import { getAllUserDeposit, getAllUserWithdraw, getUserAccountBalance, getUserLastDeposit, getUserLastWithdrawal } from "../redux/transactions/transactionService";
+import Loader from "../components/Loader";
 
 const Dashboard = () => {
+  const dispatch = useDispatch()
+
+
+  //API CALLS  ===========================================================
+  useEffect(() => {
+    async function userTransactions() {
+      const userBalance = await getUserAccountBalance();
+      const userLastDeposit = await getUserLastDeposit();
+      const allUserDeposit = await getAllUserDeposit()
+      const userLastWithdrawal = await getUserLastWithdrawal()
+      const allUserWithdraw = await getAllUserWithdraw()
+      console.log(userLastWithdrawal)
+      
+      dispatch(user_account_balance(userBalance));
+      dispatch(user_last_deposit(userLastDeposit.amount))
+      dispatch(user_pending_deposit(allUserDeposit))
+      dispatch(user_total_deposit(allUserDeposit))
+      dispatch(user_last_withdrawal(userLastWithdrawal))
+      dispatch(user_pending_withdrawal(allUserWithdraw));
+      dispatch(user_total_withdrawal(allUserWithdraw));
+    }
+    userTransactions()
+  }, [dispatch])
+  
+  // //Account Balance ===========================================================
+  const allTransaction = useSelector((state) => state.persistedReducer.transactions);
+  
+
+
+
   
   return (
     <MainLayout>
+      {allTransaction?.accountBalance === 1 && <Loader/> }
       <Dash>
-          <div className="dashboard-content">
-            <Time />
-            <hr />
-            <br />
-            <div className="dash-content-content">
-              <div className="left-dash dash">
-                <div className="balance">
-                  <h6>ACCOUNT BALANCE</h6>
-                  <hr />
-                  <div className="dollar">
-                    <span>$</span>
-                    <span>200</span>
-                  </div>
-                  <hr />
-                  <div className="call-to-action">
-                      <Link to={"/my-new-deposit"}>DEPOSIT</Link>
-                      {/* <Link to={"/topUp"}>TOP-UP</Link> */}
-                   
-                      {/* <p>CANT WITHDRAW</p> */}
-                      <Link to={"/withdraw"}>WITHDRAW</Link>
-                  </div>
+        <div className="dashboard-content">
+          <Time />
+          <hr />
+          <br />
+          <div className="dash-content-content">
+            <div className="left-dash dash">
+              <div className="balance">
+                <h6>ACCOUNT BALANCE</h6>
+                <hr />
+                <div className="dollar">
+                  <span>$</span>
+                  <span>{allTransaction?.accountBalance}</span>
                 </div>
-                <div className="referals">
-                  <div className="view-profile">
-                    <Link to={"/my-profile"}>VIEW PROFILE</Link>
-                  </div>
-                </div>
-              </div>
-              <div className="middle-dash dash">
-                <div className="one-dash">
-                  <div className="dash-icons">
-                    <FaBitcoin />
-                  </div>
-                  <div className="inside-dash">
-                    <span>$ 300</span>
-                    <p className="dark">TOTAL DEPOSIT</p>
-                  </div>
-                </div>
-                <div className="two-dash">
-                  <div className="dash-icons">
-                    <RiLuggageDepositFill />
-                  </div>
-                  <div className="inside-dash">
-                    <span className="text-danger fw-bold">
-                      $ 400
-                    </span>
-                    <p className="dark">PENDING DEPOSIT</p>
-                  </div>
-                </div>
-                <div className="one-dash">
-                  <div className="dash-icons">
-                    <BsHourglassSplit />
-                  </div>
-                  <div className="inside-dash">
-                    <span>$ 40</span>
-                    <p className="dark">LAST DEPOSIT</p>
-                  </div>
-                </div>
-                <div className="two-dash">
-                  <Link to={"/all-my-deposits"}>MY DEPOSITS</Link>
-                </div>
-              </div>
+                <hr />
+                <div className="call-to-action">
+                  <Link to={"/my-new-deposit"}>DEPOSIT</Link>
+                  {/* <Link to={"/topUp"}>TOP-UP</Link> */}
 
-              <div className="right-dash dash">
-                <div className="one-dash">
-                  <div className="dash-icons">
-                    <FaBitcoin />
-                  </div>
-                  <div className="inside-dash">
-                    <span>$ 240.00</span>
-                    <p className="dark">TOTAL WITHDRAWAL</p>
-                  </div>
+                  {/* <p>CANT WITHDRAW</p> */}
+                  <Link to={"/withdraw"}>WITHDRAW</Link>
                 </div>
-                <div className="two-dash">
-                  <div className="dash-icons">
-                    <BsCashCoin />
-                  </div>
-                  <div className="inside-dash">
-                    <span className="text-danger fw-bold">
-                      $ 58.00
-                    </span>
-                    <p className="dark">PENDING WITHDRAWAL</p>
-                  </div>
-                </div>
-                <div className="one-dash">
-                  <div className="dash-icons">
-                    <TbZoomMoney />
-                  </div>
-                  <div className="inside-dash">
-                    $ 250
-                    <p className="dark">LAST WITHDRAWAL</p>
-                  </div>
-                </div>
-                <div className="two-dash">
-                  <Link to={"/transactions"}>TRANSACTIONS</Link>
+              </div>
+              <div className="referals">
+                <div className="view-profile">
+                  <Link to={"/my-profile"}>VIEW PROFILE</Link>
                 </div>
               </div>
             </div>
+            <div className="middle-dash dash">
+              <div className="one-dash">
+                <div className="dash-icons">
+                  <FaBitcoin />
+                </div>
+                <div className="inside-dash">
+                  <span>$ {allTransaction?.totalDeposit}</span>
+                  <p className="dark">TOTAL DEPOSIT</p>
+                </div>
+              </div>
+              <div className="two-dash">
+                <div className="dash-icons">
+                  <RiLuggageDepositFill />
+                </div>
+                <div className="inside-dash">
+                  <span className="text-danger fw-bold">
+                    $ {allTransaction?.pendingDeposit}
+                  </span>
+                  <p className="dark">PENDING DEPOSIT</p>
+                </div>
+              </div>
+              <div className="one-dash">
+                <div className="dash-icons">
+                  <BsHourglassSplit />
+                </div>
+                <div className="inside-dash">
+                  <span>$ {allTransaction?.lastDeposit}</span>
+                  <p className="dark">LAST DEPOSIT</p>
+                </div>
+              </div>
+              <div className="two-dash">
+                <Link to={"/all-my-deposits"}>MY DEPOSITS</Link>
+              </div>
+            </div>
+
+            <div className="right-dash dash">
+              <div className="one-dash">
+                <div className="dash-icons">
+                  <FaBitcoin />
+                </div>
+                <div className="inside-dash">
+                  <span>$ {allTransaction?.totalWithdrawal}</span>
+                  <p className="dark">TOTAL WITHDRAWAL</p>
+                </div>
+              </div>
+              <div className="two-dash">
+                <div className="dash-icons">
+                  <BsCashCoin />
+                </div>
+                <div className="inside-dash">
+                  <span className="text-danger fw-bold">
+                    $ {allTransaction.pendingWithdrawal}
+                    
+                  </span>
+                  <p className="dark">PENDING WITHDRAWAL</p>
+                </div>
+              </div>
+              <div className="one-dash">
+                <div className="dash-icons">
+                  <TbZoomMoney />
+                </div>
+                <div className="inside-dash">
+                  $ {allTransaction?.lastWithdrawal} 
+                  <p className="dark">LAST WITHDRAWAL</p>
+                </div>
+              </div>
+              <div className="two-dash">
+                <Link to={"/transactions"}>TRANSACTIONS</Link>
+              </div>
+            </div>
           </div>
+        </div>
       </Dash>
     </MainLayout>
   );

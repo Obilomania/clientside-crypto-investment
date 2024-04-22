@@ -46,7 +46,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!registerInfo.fullname || !registerInfo.email || !registerInfo.password || !registerInfo.confirmPassword || !registerInfo.btcWallet) {
+    if (!fullname || !email || !password || !confirmPassword || !btcWallet) {
       return toast.error("Please fill all fields Bro");
     } else if (registerInfo.password !== registerInfo.confirmPassword) {
       return toast.error("Password is not a Match");
@@ -63,9 +63,13 @@ const Register = () => {
     formData.append("btcWallet", btcWallet);
     formData.append("userPromoCode", userPromoCode);
     await registerNewUser(formData)
-    // navigate("/")
+    navigate("/login")
     setisLoading(false)
   };
+
+
+
+  
   return (
     <MainLayout>
       {isLoading && <Loader />}

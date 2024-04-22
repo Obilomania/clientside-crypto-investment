@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { FiMenu } from "react-icons/fi";
 import Logo from "../../assets/nova-logo.png";
+import { useDispatch, useSelector } from "react-redux";
+
+
+
+const activeLink = ({ isActive }) => (isActive ? "activeLink" : "darkLink");
+
 
 
 const Header = () => {
-
+  const [navigation, setNavigation] = useState(false);
+  const toggleNav = () => setNavigation(!navigation);
+  const userInfo = useSelector(state => state.persistedReducer.auth)
 
   return (
     <Navigation>
@@ -15,47 +23,84 @@ const Header = () => {
           <img src={Logo} alt="company--logo" />
         </Link>
       </div>
-      <div className="navLinks">
-        <NavLink to={"/"} className="">
+      <div className={navigation ? "navLinks" : "navClose"}>
+        <NavLink to={"/"} className={activeLink} onClick={toggleNav}>
           HOME
         </NavLink>
-        <NavLink to={"/about"} className="">
+        <NavLink to={"/about"} className={activeLink} onClick={toggleNav}>
           ABOUT
         </NavLink>
-        <NavLink to={"/faqs"} className="">
+        <NavLink to={"/faqs"} className={activeLink} onClick={toggleNav}>
           FAQs
         </NavLink>
-        <NavLink to={"/contact"} className="">
+        <NavLink to={"/contact"} className={activeLink} onClick={toggleNav}>
           CONTACT
         </NavLink>
-            {/* <NavLink
+        <NavLink
+          to={"/login"}
+          className={activeLink}
+          id="login"
+          onClick={toggleNav}
+        >
+          LOGIN
+        </NavLink>
+        <NavLink
+          to={"/register"}
+          className={activeLink}
+          id="login"
+          onClick={toggleNav}
+        >
+          REGISTER
+        </NavLink>
+        {/* {userInfo?.role === "Admin" && (
+          <>
+            <NavLink
               to={"/admin-landing"}
-              className=""
+              className={activeLink}
               id="login"
+              onClick={toggleNav}
             >
               ADMIN
             </NavLink>
+          </>
+        )}
 
+        {userInfo ? (
+          <>
             <NavLink
               to={"/dashboard"}
-              className=""
+              className={activeLink}
               id="login"
+              onClick={toggleNav}
             >
               DASHBOARD
             </NavLink>
             <button className="LogOut-btn">
               LOGOUT
-            </button> */}
-            <NavLink to={"/login"} className="" id="login">
+            </button>
+          </>
+        ) : (
+          <>
+            <NavLink
+              to={"/login"}
+              className={activeLink}
+              id="login"
+              onClick={toggleNav}
+            >
               LOGIN
             </NavLink>
-        
-
-            <NavLink to={"/register"} className="" id="login">
+            <NavLink
+              to={"/register"}
+              className={activeLink}
+              id="login"
+              onClick={toggleNav}
+            >
               REGISTER
             </NavLink>
+          </>
+        )} */}
       </div>
-      <div className="hamburger">
+      <div className="hamburger" onClick={toggleNav}>
         <FiMenu />
       </div>
     </Navigation>

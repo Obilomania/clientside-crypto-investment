@@ -1,107 +1,117 @@
 import MainLayout from "../components/layout/MainLayout";
 import styled from "styled-components";
 import Time from "../components/Time";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { getAllUsertransactions } from "../redux/transactions/transactionService";
+import { all_transactions } from "../redux/transactions/transactionSlice";
 
 
 
 
 const Transactions = () => {
-  
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const getDeposits = async () => {
-  //     setIsLoading(true);
-  //     const response = await axios.get(
-  //       `${BackendUrl}/transaction/my-transactions`,
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-  //     setdata(response.data);
-  //     setIsLoading(false);
-  //   };
-  //   if (data) {
-  //     dispatch(TRANSACTIONS(data));
-  //     dispatch(ALL_WITHDRAW(data));
-  //     dispatch(ALL_DEPOSIT(data));
-  //     setIsLoading(false);
-  //   }
-  //   setIsLoading(false);
-  //   getDeposits();
-  // }, [data, dispatch]);
+  useEffect(() => {
+    async function getUserTransactions() {
+      const response = await getAllUsertransactions()
+      if (response) {
+        dispatch(all_transactions(response))
+      }
+    }
+    getUserTransactions()
+  }, [dispatch])
+
+
+  const allTransactions = useSelector(state => state.persistedReducer.transactions)
+
+  const allDeposits = allTransactions.deposits
+  const allWithdrawals = allTransactions.withdrawals
+
+  console.log(allDeposits)
+
 
   return (
     <MainLayout>
-          <Transact>
-            <div className="dashboard-content">
-              <Time />
-              <hr />
-              <br />
-              <div className="right-dash dash">
-                <h5 className="heading-deposit-form">ALL TRANSACTIONS</h5>
-                {/* <div className="filter-transact">
+      <Transact>
+        <div className="dashboard-content">
+          <Time />
+          <hr />
+          <br />
+          <div className="right-dash dash">
+            <h5 className="heading-deposit-form">ALL TRANSACTIONS</h5>
+            {/* <div className="filter-transact">
               THIS IS WHERE THE FILTER WILL COME IN
             </div> */}
-                <h6>
-                  <b>WITHDRAWALS</b>
-                </h6>
-                <div className="div-table">
-                  <div className="table-heading the-row">
-                    <p className="amount">AMOUNT</p>
-                    <p className="timing">TIME</p>
-                    <p className="plan">STATUS</p>
-                    <p className="status">WALLET</p>
-                  </div>
-                  {/* ------------------------------------- */}
-                      <div className="table-body the-row one">
-                        <p className="amount">
-                          $ 300
-                        </p>
-                        <p className="timing">10:52AM</p>
-                        <p className="timing">
-                            <span className="span-processing">Processing</span>
-                            <span className="span-success">Successful</span>
-                        </p>
-                        <p className="wallet">
-                          adhi9d800rn0df9dsn00sdujs0d0sdfs0gsjsd000
-                        </p>
-                      </div>
-                    <div className="table-body the-row one no-transaction">
-                      <p className="text-danger">NO WITHDRAWAL MADE</p>
-                    </div>
-                </div>{" "}
-                <hr />
-                <h6>
-                  <b>DEPOSITS</b>
-                </h6>
-                <div className="div-table">
-                  <div className="table-heading the-row">
-                    <p className="amount">AMOUNT</p>
-                    <p className="timing">TIME</p>
-                    <p className="plan">PLAN</p>
-                    <p className="status">STATUS</p>
-                  </div>
-                  {/* ------------------------------------- */}
-                      <div className="table-body the-row one">
-                        <p className="amount">
-                          $ 350
-                        </p>
-                        <p className="timing">12:00PM</p>
-                        <p className="plan">GOLD</p>
-                        <p className="status">
-                          {" "}
-                            <span className="span-processing">Processing</span>
-                            <span className="span-success">Successful</span>
-                        </p>
-                      </div>
-                    <div className="table-body the-row one no-transaction">
-                      <p className="text-danger">NO DEPOSIT MADE</p>
-                    </div>
-                </div>
+            <h6>
+              <b>WITHDRAWALS</b>
+            </h6>
+            <div className="div-table">
+              <div className="table-heading the-row">
+                <p className="amount">AMOUNT</p>
+                <p className="timing">TIME</p>
+                <p className="plan">STATUS</p>
+                <p className="status">WALLET</p>
               </div>
-              <button>GO BACK</button>
+              {/* ------------------------------------- */}
+              {allWithdrawals ? <>
+                {allWithdrawals.map(withdraw => <>
+                  <div className="table-body the-row one">
+                    <p className="amount">
+                      $ {withdraw?.amount}
+                    </p>
+                    <p className="timing">{withdraw?.created}</p>
+                    <p className="timing">
+                      {withdraw?.isProcessing ? <span className="span-processing">Processing</span> : <span className="span-success">Successful</span>}
+                    </p>
+                    <p className="wallet">
+                      adhi9d800rn0df9dsn00sdujs0d0sdfs0gsjsd000
+                    </p>
+                  </div>
+                </>)}
+              </> : <div className="table-body the-row one no-transaction">
+                <p className="text-danger">NO WITHDRAWAL MADE</p>
+              </div>}
+
+            </div>{" "}
+            <hr />
+            <h6>
+              <b>DEPOSITS</b>
+            </h6>
+            <div className="div-table">
+              <div className="table-heading the-row">
+                <p className="amount">AMOUNT</p>
+                <p className="timing">TIME</p>
+                <p className="plan">PLAN</p>
+                <p className="status">STATUS</p>
+              </div>
+              {/* ------------------------------------- */}
+              {allDeposits ? <>{
+                allDeposits.map(depo => <>
+                  <div className="table-body the-row one" key={depo._id}>
+                    <p className="amount">
+                      $ {depo?.amount}
+                    </p>
+                    <p className="timing">{depo?.created}</p>
+                    <p className="plan">{depo?.plan}</p>
+                    <p className="status">
+                      {depo?.isProcessing ? <span className="span-processing">Processing</span> : <span className="span-success">Successful</span>}
+
+
+                    </p>
+                  </div>
+                </>)
+              } </> : <div className="table-body the-row one no-transaction">
+                <p className="text-danger">NO DEPOSIT MADE</p>
+              </div>}
+
             </div>
-          </Transact>
+          </div>
+          <button onClick={() => navigate(-1)}>GO BACK</button>
+        </div>
+      </Transact>
     </MainLayout>
   );
 };

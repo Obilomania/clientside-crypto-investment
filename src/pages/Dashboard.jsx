@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../components/layout/MainLayout";
 import styled from "styled-components";
 import Time from "../components/Time";
@@ -14,6 +14,10 @@ import Loader from "../components/Loader";
 
 const Dashboard = () => {
   const dispatch = useDispatch()
+  const [lastDepos, setLastDepos] = useState('')
+  const [cantWithdraw, setCantWithdraw] = useState(false);
+
+
 
 
   //API CALLS  ===========================================================
@@ -24,7 +28,9 @@ const Dashboard = () => {
       const allUserDeposit = await getAllUserDeposit()
       const userLastWithdrawal = await getUserLastWithdrawal()
       const allUserWithdraw = await getAllUserWithdraw()
-      
+      const res = await getUserLastDeposit()
+      setLastDepos(res)
+
       dispatch(user_account_balance(userBalance));
       dispatch(user_last_deposit(userLastDeposit.amount))
       dispatch(user_pending_deposit(allUserDeposit))
@@ -35,17 +41,34 @@ const Dashboard = () => {
     }
     userTransactions()
   }, [dispatch])
-  
+
+
+
   // //Account Balance ===========================================================
   const allTransaction = useSelector((state) => state.persistedReducer.transactions);
-  
+
+
+  // //Top Up Balance Settings ===========================================================
+  let currentPlan = lastDepos?.plan;
+  let accountBalance = allTransaction?.accountBalance;
+
+  useEffect(() => {
+    if (currentPlan === "Gold" || accountBalance <= 7000) {
+      setCantWithdraw(true);
+    } else if (currentPlan === "Silver" || accountBalance <= 3500) {
+      setCantWithdraw(true);
+    } else if (currentPlan === "Plantinum" || accountBalance <= 7000) {
+      setCantWithdraw(true);
+    } else if (currentPlan === "Diamond" || accountBalance >= 2500) {
+      setCantWithdraw(true);
+    }
+  }, [accountBalance, currentPlan]);
 
 
 
-  
   return (
     <MainLayout>
-      {allTransaction?.accountBalance === 1 && <Loader/> }
+      {allTransaction?.accountBalance === 1 && <Loader />}
       <Dash>
         <div className="dashboard-content">
           <Time />
@@ -62,11 +85,17 @@ const Dashboard = () => {
                 </div>
                 <hr />
                 <div className="call-to-action">
-                  <Link to={"/my-new-deposit"}>DEPOSIT</Link>
-                  {/* <Link to={"/topUp"}>TOP-UP</Link> */}
-
-                  {/* <p>CANT WITHDRAW</p> */}
-                  <Link to={"/withdraw"}>WITHDRAW</Link>
+                  {currentPlan === "Bronze" || !currentPlan
+                    ? (
+                      <Link to={"/my-new-deposit"}>DEPOSIT</Link>
+                    ) : (
+                      <Link to={"/topUp"}>TOP-UP</Link>
+                    )}
+                  {accountBalance === 0 || accountBalance > 300 ? (
+                    <p>CANT WITHDRAW</p>
+                  ) : (
+                    <Link to={"/withdraw"}>WITHDRAW</Link>
+                  )}
                 </div>
               </div>
               <div className="referals">
@@ -127,7 +156,7 @@ const Dashboard = () => {
                 <div className="inside-dash">
                   <span className="text-danger fw-bold">
                     $ {allTransaction.pendingWithdrawal}
-                    
+
                   </span>
                   <p className="dark">PENDING WITHDRAWAL</p>
                 </div>
@@ -137,7 +166,7 @@ const Dashboard = () => {
                   <TbZoomMoney />
                 </div>
                 <div className="inside-dash">
-                  $ {allTransaction?.lastWithdrawal} 
+                  $ {allTransaction?.lastWithdrawal}
                   <p className="dark">LAST WITHDRAWAL</p>
                 </div>
               </div>
@@ -214,6 +243,7 @@ const Dash = styled.div`
           letter-spacing: 0px;
           transition: var(--transition);
           margin-top: 1rem;
+          font-size:.8rem;
         }
         a {
           text-decoration: none;
@@ -225,6 +255,7 @@ const Dash = styled.div`
           font-weight: 500;
           letter-spacing: 1px;
           transition: var(--transition);
+          font-size:.8rem;
           &:hover {
             background: black;
             color: white;
@@ -246,6 +277,7 @@ const Dash = styled.div`
         font-weight: 500;
         letter-spacing: 1px;
         transition: var(--transition);
+        font-size:.8rem;
         &:hover {
           background: black;
           color: white;
@@ -284,6 +316,7 @@ const Dash = styled.div`
         &:hover {
           background: none;
           color: var(--light);
+
         }
       }
     }
@@ -302,13 +335,14 @@ const Dash = styled.div`
       display: flex;
       align-items: center;
       justify-content: flex-start;
+      font-size:.8rem;
       gap: 1rem;
       padding: 0.8rem 2rem;
       width: 100%;
       /* height:5rem; */
     }
     .dash-icons {
-      font-size: 3rem;
+      font-size: 2rem;
       margin-bottom: 1rem;
     }
     .inside-dash {
@@ -316,11 +350,12 @@ const Dash = styled.div`
       flex-direction: column;
       align-items: start;
       p {
-        font-size: 1.2rem;
+        font-size: 1rem;
       }
     }
     .dark {
       font-weight: 600;
+      font-size:.8rem;
     }
     .two-dash {
       background: rgba(214, 214, 214, 0.2);

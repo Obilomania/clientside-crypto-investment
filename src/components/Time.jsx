@@ -41,7 +41,6 @@ const Time = () => {
 
 
   const currentDate = new Date(lastDepoDate);
-  console.log(currentDate);
   const daysLater = new Date(currentDate);
   daysLater.setDate(currentDate.getDate() + investmentPlan);
   let duration = daysLater.toLocaleString("en-US", {

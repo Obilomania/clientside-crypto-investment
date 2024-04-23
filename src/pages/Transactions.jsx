@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getAllUsertransactions } from "../redux/transactions/transactionService";
-import { all_transactions } from "../redux/transactions/transactionSlice";
+import {  all_user_transactions } from "../redux/transactions/transactionSlice";
 
 
 
@@ -18,7 +18,7 @@ const Transactions = () => {
     async function getUserTransactions() {
       const response = await getAllUsertransactions()
       if (response) {
-        dispatch(all_transactions(response))
+        dispatch(all_user_transactions(response))
       }
     }
     getUserTransactions()

@@ -6,7 +6,7 @@ import { FiExternalLink } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getUserLastDeposit } from "../redux/transactions/transactionService";
-import { user_top_up_time } from "../redux/transactions/transactionSlice";
+import { top_up_time } from "../redux/transactions/transactionSlice";
 
 const Time = () => {
   const [lastDepos, setLastDepos] = useState('')
@@ -20,7 +20,7 @@ const Time = () => {
     }
     userlastDeposit();
   }, [])
-  
+
   let lastDepoDate = lastDepos?.createdAt;
 
   let investmentPlan = lastDepos?.plan;
@@ -56,23 +56,23 @@ const Time = () => {
 
   useEffect(() => {
     if (duration) {
-      dispatch(user_top_up_time(duration));
+      dispatch(top_up_time(duration));
     }
   }, [dispatch, duration]);
 
   //Time and Greeting and Time note
   let today = new Date();
- let greeting = () => {
-   if (today.getHours() >= 5 && today.getHours() < 11) {
-     return "Good Morning";
-   } else if (today.getHours() >= 11 && today.getHours() < 17) {
-     return "Good Afternoon";
-   } else if (today.getHours() >= 17 && today.getHours() < 24) {
-     return " Good Evening";
-   } else {
-     return "Wow!!! its late, Why are you Up? ";
-   }
- };
+  let greeting = () => {
+    if (today.getHours() >= 5 && today.getHours() < 11) {
+      return "Good Morning";
+    } else if (today.getHours() >= 11 && today.getHours() < 17) {
+      return "Good Afternoon";
+    } else if (today.getHours() >= 17 && today.getHours() < 24) {
+      return " Good Evening";
+    } else {
+      return "Wow!!! its late, Why are you Up? ";
+    }
+  };
 
 
   return (
@@ -145,7 +145,7 @@ const Timing = styled.div`
       font-size: 1rem;
     }
     span {
-      font-size: 1.5rem;
+      font-size: .8rem;
       color: var(--primary);
       text-transform: uppercase;
       font-family: "Poppins", sans-serif;

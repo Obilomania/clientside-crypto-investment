@@ -78,11 +78,12 @@ const Foot = styled.div`
     align-items: start;
     justify-content: space-between;
     width: 100%;
-    padding: 4rem 10rem;
+    padding: 2rem 10rem;
     color: white;
     a {
       color: white;
       text-decoration: none;
+      font-size:.8rem;
     }
   }
 
@@ -99,11 +100,13 @@ const Foot = styled.div`
       justify-content: center;
       gap: 1rem;
       line-height: 1.5rem;
+      font-size:.8rem;
     }
   }
   .footer-bottom {
     background: #000000;
-    padding: 1rem 10rem;
+    padding: .5rem 10rem;
+    font-size:.8rem;
     color: white;
     display: flex;
     align-items: center;

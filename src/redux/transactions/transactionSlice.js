@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  accountBalance: 0,
-  totalDeposit: 0,
-  pendingDeposit: 0,
-  lastDeposit: 0,
-  totalWithdrawal: 0,
-  pendingWithdrawal: 0,
-  lastWithdrawal: 0,
+  userAccountBalance: 0,
+  userTotalDepositAmount: 0,
+  pendingDepositAmount: 0,
+  userLastDepositAmount: 0,
+  theUserLastDeposit: null,
+  userTotalWithdrawalAmount: 0,
+  userPendingWithdrawalAmount: 0,
+  userLastWithdrawalAmount: 0,
   withdrawals: [],
   deposits: [],
   topUpTime: ''
@@ -18,106 +19,41 @@ const trnsactionSlice = createSlice({
   name: "transaction",
   initialState,
   reducers: {
-    user_account_balance: (state, action) => {
-      state.accountBalance = action.payload;
+    user_account_balance_amount: (state, action) => {
+      state.userAccountBalance = action.payload
+    },
+    user_total_deposit_amount: (state, action) => {
+      state.userTotalDepositAmount = action.payload
+    },
+    user_pending_deposit_amount: (state, action) => {
+      state.pendingDepositAmount = action.payload
+    },
+    user_last_deposit_amount: (state, action) => {
+      state.userLastDepositAmount = action.payload
     },
     user_last_deposit: (state, action) => {
-      state.lastDeposit = action.payload;
+      state.theUserLastDeposit = action.payload
     },
-    user_pending_deposit: (state, action) => {
-      const allUserDeposit = action.payload;
-      if (!allUserDeposit) {
-        state.pendingDeposit = 0
-      } else {
-        const depositProcessing = allUserDeposit?.filter(
-          (obj) => !obj.isProcessing
-        );
-        //Total amount of processing Deposit transactions
-        const pendingDepositTotal = depositProcessing?.reduce((acc, object) => {
-          return acc + object.amount;
-        }, 0);
-        state.pendingDeposit = pendingDepositTotal;
-      }
+    user_total_withdrawal_amount: (state, action) => {
+      state.userTotalWithdrawalAmount = action.payload
     },
-    user_total_deposit: (state, action) => {
-      const deposits = action.payload;
-      if (!deposits) {
-        state.totalDeposit = 0
-      } else {
-        const theTotalDeposit = deposits?.reduce((acc, object) => {
-          return acc + object.amount;
-        }, 0);
-        state.totalDeposit = theTotalDeposit;
-      }
+    user_pending_withdrwawal_amount: (state, action) => {
+      state.userPendingWithdrawalAmount = action.payload
     },
-    user_last_withdrawal: (state, action) => {
-      const theLastWith = action.payload
-      if (!theLastWith) {
-        state.lastWithdrawal = 0
-      }
-      else {
-        state.lastWithdrawal = theLastWith;
-      }
-
+    user_last_withdrawal_amount: (state, action) => {
+      state.userLastWithdrawalAmount = action.payload
     },
-    user_pending_withdrawal: (state, action) => {
-      const pWithdrawal = action.payload;
-      if (!pWithdrawal) {
-        state.pendingWithdrawal = 0
-      } else {
-        //FIlter Deposit still processing
-        const withdrawalProcessing = pWithdrawal?.filter(
-          (obj) => !obj.isProcessing
-        );
-        //Total amount of processing Deposit transactions
-        const pendngWithdrawTotal = withdrawalProcessing?.reduce(
-          (acc, object) => {
-            return acc + object.amount;
-          },
-          0
-        );
-        state.pendingWithdrawal = pendngWithdrawTotal;
-      }
-
+    all_user_transactions: (state, action) => {
+      const transactions = action.payload
+      state.withdrawals = transactions.withdraw
+      state.deposits = transactions.deposits
     },
-    user_total_withdrawal: (state, action) => {
-      const withdrawals = action.payload;
-      if (!withdrawals) {
-        state.totalWithdrawal = 0
-      } else {
-        const theTotalWithdrawal = withdrawals?.reduce((acc, object) => {
-          return acc + object.amount;
-        }, 0);
-        state.totalWithdrawal = theTotalWithdrawal;
-      }
-    },
-    all_transactions: (state, action) => {
-      const allTransactions = action.payload;
-      if (!allTransactions) {
-        state.deposits = []
-        state.withdraw = []
-      } else {
-        const deposits = allTransactions.deposits
-        const withdrawals = allTransactions.withdraw
-        state.deposits = deposits
-        state.withdrawals = withdrawals
-      }
-    }, user_top_up_time: (state, action) => {
+    top_up_time: (state, action) => {
       state.topUpTime = action.payload
     }
   },
 });
 
-export const {
-  user_account_balance,
-  user_last_deposit,
-  user_pending_deposit,
-  user_total_deposit,
-  user_last_withdrawal,
-  user_pending_withdrawal,
-  user_total_withdrawal,
-  all_transactions,
-  user_top_up_time
-} = trnsactionSlice.actions;
+export const { user_account_balance_amount, user_total_deposit_amount, user_pending_deposit_amount, user_last_deposit_amount,user_last_deposit, user_total_withdrawal_amount, user_pending_withdrwawal_amount, user_last_withdrawal_amount, all_user_transactions, top_up_time } = trnsactionSlice.actions;
 
 export default trnsactionSlice.reducer

@@ -49,7 +49,6 @@ export const loginUser = async (userData) => {
           axiosConfig,
           { withCredentials: true }
         );
-      console.log(response)
         if (response.status === 200 || response.statusText === "OK") {
           toast.success("Login is successful");
         }

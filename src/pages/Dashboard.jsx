@@ -8,14 +8,17 @@ import { TbZoomMoney } from "react-icons/tb";
 import { RiLuggageDepositFill } from "react-icons/ri";
 import { BsCashCoin, BsHourglassSplit } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { user_account_balance, user_last_deposit, user_last_withdrawal, user_pending_deposit, user_pending_withdrawal, user_total_deposit, user_total_withdrawal } from "../redux/transactions/transactionSlice";
-import { getAllUserDeposit, getAllUserWithdraw, getUserAccountBalance, getUserLastDeposit, getUserLastWithdrawal } from "../redux/transactions/transactionService";
 import Loader from "../components/Loader";
+import { getAllUserDepositTotal, getAllUserPendingWithdrawal, getAllUsertransactions, getUserAccountBalance, getUserLastDeposit, getUserLastWithdrawal, getUserPendingDepositAmount, getUserTotalWithdrawalAmount, theUserLastDeposit } from "../redux/transactions/transactionService";
+import { all_user_transactions, user_account_balance_amount, user_last_deposit, user_last_deposit_amount, user_last_withdrawal_amount, user_pending_deposit_amount, user_pending_withdrwawal_amount, user_total_deposit_amount, user_total_withdrawal_amount } from "../redux/transactions/transactionSlice";
+
+
 
 const Dashboard = () => {
   const dispatch = useDispatch()
   const [lastDepos, setLastDepos] = useState('')
   const [cantWithdraw, setCantWithdraw] = useState(false);
+  const [data, setdata] = useState(null)
 
 
 
@@ -23,23 +26,31 @@ const Dashboard = () => {
   //API CALLS  ===========================================================
   useEffect(() => {
     async function userTransactions() {
-      const userBalance = await getUserAccountBalance();
-      const userLastDeposit = await getUserLastDeposit();
-      const allUserDeposit = await getAllUserDeposit()
-      const userLastWithdrawal = await getUserLastWithdrawal()
-      const allUserWithdraw = await getAllUserWithdraw()
-      const res = await getUserLastDeposit()
-      setLastDepos(res)
+      const userTotalAccountBalance = await getUserAccountBalance()
+      const userTotalDepositAmount = await getAllUserDepositTotal()
+      const userPendingDepositAmount = await getUserPendingDepositAmount()
+      const userLastDepositAmount = await getUserLastDeposit()
+      const userTotalWithdrawalAmount = await getUserTotalWithdrawalAmount()
+      const userPendingWithdrawaltotal = await getAllUserPendingWithdrawal()
+      const userLastWithdrawalAmount = await getUserLastWithdrawal()
+      const getAlltransactions = await getAllUsertransactions()
+      const lastDeposit = await theUserLastDeposit()
+      setLastDepos(lastDeposit)
 
-      dispatch(user_account_balance(userBalance));
-      dispatch(user_last_deposit(userLastDeposit.amount))
-      dispatch(user_pending_deposit(allUserDeposit))
-      dispatch(user_total_deposit(allUserDeposit))
-      dispatch(user_last_withdrawal(userLastWithdrawal))
-      dispatch(user_pending_withdrawal(allUserWithdraw));
-      dispatch(user_total_withdrawal(allUserWithdraw));
+
+
+      dispatch(user_account_balance_amount(userTotalAccountBalance))
+      dispatch(user_total_deposit_amount(userTotalDepositAmount))
+      dispatch(user_pending_deposit_amount(userPendingDepositAmount))
+      dispatch(user_last_deposit_amount(userLastDepositAmount))
+      dispatch(user_last_deposit(lastDeposit))
+      dispatch(user_total_withdrawal_amount(userTotalWithdrawalAmount))
+      dispatch(user_pending_withdrwawal_amount(userPendingWithdrawaltotal))
+      dispatch(user_last_withdrawal_amount(userLastWithdrawalAmount));
+      dispatch(all_user_transactions(getAlltransactions))
     }
-    userTransactions()
+      userTransactions()
+
   }, [dispatch])
 
 
@@ -49,8 +60,8 @@ const Dashboard = () => {
 
 
   // //Top Up Balance Settings ===========================================================
-  let currentPlan = lastDepos?.plan;
-  let accountBalance = allTransaction?.accountBalance;
+  let currentPlan = allTransaction?.theUserLastDeposit?.plan;
+  let accountBalance = allTransaction?.userAccountBalance;
 
   useEffect(() => {
     if (currentPlan === "Gold" || accountBalance <= 7000) {
@@ -81,7 +92,7 @@ const Dashboard = () => {
                 <hr />
                 <div className="dollar">
                   <span>$</span>
-                  <span>{allTransaction?.accountBalance}</span>
+                  <span>{allTransaction?.userAccountBalance}</span>
                 </div>
                 <hr />
                 <div className="call-to-action">
@@ -110,7 +121,7 @@ const Dashboard = () => {
                   <FaBitcoin />
                 </div>
                 <div className="inside-dash">
-                  <span>$ {allTransaction?.totalDeposit}</span>
+                  <span>$ {allTransaction?.userTotalDepositAmount}</span>
                   <p className="dark">TOTAL DEPOSIT</p>
                 </div>
               </div>
@@ -120,7 +131,7 @@ const Dashboard = () => {
                 </div>
                 <div className="inside-dash">
                   <span className="text-danger fw-bold">
-                    $ {allTransaction?.pendingDeposit}
+                    $ {allTransaction?.pendingDepositAmount}
                   </span>
                   <p className="dark">PENDING DEPOSIT</p>
                 </div>
@@ -130,7 +141,7 @@ const Dashboard = () => {
                   <BsHourglassSplit />
                 </div>
                 <div className="inside-dash">
-                  <span>$ {allTransaction?.lastDeposit}</span>
+                  {/* <span>$ {allTransaction?.lastDeposit}</span> */}
                   <p className="dark">LAST DEPOSIT</p>
                 </div>
               </div>
@@ -145,7 +156,7 @@ const Dashboard = () => {
                   <FaBitcoin />
                 </div>
                 <div className="inside-dash">
-                  <span>$ {allTransaction?.totalWithdrawal}</span>
+                  <span>$ {allTransaction?.userTotalWithdrawalAmount}</span>
                   <p className="dark">TOTAL WITHDRAWAL</p>
                 </div>
               </div>
@@ -155,7 +166,7 @@ const Dashboard = () => {
                 </div>
                 <div className="inside-dash">
                   <span className="text-danger fw-bold">
-                    $ {allTransaction.pendingWithdrawal}
+                    $ {allTransaction.userPendingWithdrawalAmount}
 
                   </span>
                   <p className="dark">PENDING WITHDRAWAL</p>
@@ -166,7 +177,7 @@ const Dashboard = () => {
                   <TbZoomMoney />
                 </div>
                 <div className="inside-dash">
-                  $ {allTransaction?.lastWithdrawal}
+                  $ {allTransaction?.userLastWithdrawalAmount}
                   <p className="dark">LAST WITHDRAWAL</p>
                 </div>
               </div>

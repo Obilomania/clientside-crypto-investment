@@ -16,6 +16,8 @@ const Header = () => {
   const toggleNav = () => setNavigation(!navigation);
   const userInfo = useSelector(state => state.persistedReducer.auth)
 
+
+
   return (
     <Navigation>
       <div className="logo">
@@ -36,23 +38,7 @@ const Header = () => {
         <NavLink to={"/contact"} className={activeLink} onClick={toggleNav}>
           CONTACT
         </NavLink>
-        <NavLink
-          to={"/login"}
-          className={activeLink}
-          id="login"
-          onClick={toggleNav}
-        >
-          LOGIN
-        </NavLink>
-        <NavLink
-          to={"/register"}
-          className={activeLink}
-          id="login"
-          onClick={toggleNav}
-        >
-          REGISTER
-        </NavLink>
-        {/* {userInfo?.role === "Admin" && (
+        {userInfo.userRole === "Admin" && (
           <>
             <NavLink
               to={"/admin-landing"}
@@ -65,7 +51,7 @@ const Header = () => {
           </>
         )}
 
-        {userInfo ? (
+        {userInfo?.currentUser ? (
           <>
             <NavLink
               to={"/dashboard"}
@@ -98,7 +84,7 @@ const Header = () => {
               REGISTER
             </NavLink>
           </>
-        )} */}
+        )}
       </div>
       <div className="hamburger" onClick={toggleNav}>
         <FiMenu />
@@ -121,9 +107,10 @@ const Navigation = styled.div`
     color: white;
     text-decoration: none;
     font-weight: 500;
+    font-size:.8rem;
   }
   .logo img {
-    width: 15rem;
+    width: 10rem;
   }
   .navLinks {
     display: flex;
@@ -145,16 +132,18 @@ const Navigation = styled.div`
   }
   #login,
   .LogOut-btn {
-    height: 10vh;
+    font-size:.8rem;
     background: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 2rem;
+    padding: .5rem 1rem;
     color: white;
     border: 1px solid var(--primary);
+    border-radius:.5rem;
   }
   .hamburger {
+
     color: white;
     font-size: 1.2rem;
     display: none;

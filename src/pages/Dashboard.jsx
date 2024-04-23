@@ -144,7 +144,7 @@ const Dashboard = () => {
                   <BsHourglassSplit />
                 </div>
                 <div className="inside-dash">
-                  {/* <span>$ {allTransaction?.lastDeposit}</span> */}
+                  <span>$ {allTransaction?.userLastDepositAmount}</span>
                   <p className="dark">LAST DEPOSIT</p>
                 </div>
               </div>

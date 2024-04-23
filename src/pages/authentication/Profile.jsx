@@ -2,7 +2,11 @@ import MainLayout from "../../components/layout/MainLayout";
 import styled from "styled-components";
 import Time from "../../components/Time";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { userProfileInfo } from "../../redux/user/userService";
+import { current_signed_in_user } from "../../redux/user/userSlice";
+import Loader from "../../components/Loader";
 
 
 
@@ -10,13 +14,26 @@ import { useSelector } from "react-redux";
 const Profile = () => {
   const userData = useSelector((state) => state.persistedReducer.auth);
   const userInfo = userData.currentUser
-  const {fullname, email, btcWallet} = userInfo
+  const { fullname, email, btcWallet } = userInfo
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  
+    useEffect(() => {
+      setIsLoading(true);
+      async function theUserInfo() {
+        const res = await userProfileInfo();
+        dispatch(current_signed_in_user(res));
+      }
+      theUserInfo();
+      setIsLoading(false);
+    }, [dispatch]);
 
 
 
 
   return (
     <MainLayout>
+      {isLoading && <Loader/>}
       <ProfilePage>
         <div className="dashboard-content">
           <Time />

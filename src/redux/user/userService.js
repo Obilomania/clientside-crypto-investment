@@ -114,3 +114,29 @@ export const userlogout = async () => {
     toast.error(message);
   }
 };
+
+
+
+
+//User Update Profile
+export const userUpdateProfile = async (userData) => {
+  try {
+    const response = await axios.put(
+      `${backend_Url}user/editprofile`,
+      userData,
+      axiosConfig,
+      { withCredentials: true }
+    );
+    console.log(response);
+    if (response.status === 200) {
+      toast.success("Updated Successfully");
+    }
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return toast.error(message);
+  }
+};

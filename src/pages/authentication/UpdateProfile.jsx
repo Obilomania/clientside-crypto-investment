@@ -1,12 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../components/layout/MainLayout";
 import styled from "styled-components";
 import Time from "../../components/Time";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { userProfileInfo, userUpdateProfile } from "../../redux/user/userService";
+import { current_signed_in_user } from "../../redux/user/userSlice";
 
 
 
 const UpdateProfile = () => {
+  const currentUser = useSelector(state => state.persistedReducer.auth);
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState({
+    fullname: "",
+  });
+
+  
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  setProfile({ ...profile, [name]: value });
+  };
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+      const response = await userUpdateProfile({
+        fullname: profile.fullname,
+      });
+    
+      if (response) {
+        navigate("/my-profile");
+      }
+  }
+
+
   return (
     <MainLayout>
       <EditProfile>
@@ -14,15 +42,13 @@ const UpdateProfile = () => {
           <Time />
           <hr />
           <div className="right-dash dash">
-            <h5 className="heading-deposit-form">EDIT PROFILE</h5>
-            <form >
+            <h5 className="heading-deposit-form">EDIT PROFILE</h5> <br />
+            <p>You can only Edit your Name</p>
+            <form onSubmit={handleSubmit}>
               <div className="plan-form">
                 <label>Full Name :</label>
-                <input
-                  type="text"
-                  name="fullname"
-                  placeholder="Full Name"
-                />
+                <input type="text" name="fullname" placeholder="Full Name" value={profile.fullname}
+                  onChange={handleInputChange} />
               </div>
               <div className="plan-form">
                 <label>
@@ -31,6 +57,9 @@ const UpdateProfile = () => {
                 <input
                   type="text"
                   placeholder="Email Address"
+                  value={currentUser?.currentUser?.email}
+                  disabled
+                  id="diabledInput"
                 />
               </div>
 
@@ -48,6 +77,9 @@ const UpdateProfile = () => {
                   type="text"
                   name="btcWallet"
                   placeholder="BTC Wallet Address"
+                  value={currentUser?.currentUser?.btcWallet}
+                  disabled
+                  id="diabledInput"
                 />
               </div>
               <div className="profile-CAL">
@@ -92,7 +124,9 @@ const EditProfile = styled.div`
       font-weight: 600;
     }
   }
-  .right-dash {
+  #diabledInput{
+background:var(--light-black)
+  } .right-dash {
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -46,7 +46,7 @@ const Dashboard = () => {
       dispatch(user_last_withdrawal_amount(userLastWithdrawalAmount));
       dispatch(all_user_transactions(getAlltransactions))
     }
-      userTransactions()
+    userTransactions()
 
   }, [dispatch])
 
@@ -73,6 +73,12 @@ const Dashboard = () => {
   }, [accountBalance, currentPlan]);
 
 
+
+  if (!allTransaction?.userAccountBalance) {
+    return (
+      <Loader />
+    )
+  }
 
   return (
     <MainLayout>

@@ -97,3 +97,20 @@ export const userProfileInfo = async () => {
   });
   return response.data;
 };
+
+//User Log Out
+export const userlogout = async () => {
+
+  try {
+    await axios.get(`${backend_Url}user/logout`, {
+      withCredentials: true,
+    });
+    toast.success("User is Logged out!!! ");
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};

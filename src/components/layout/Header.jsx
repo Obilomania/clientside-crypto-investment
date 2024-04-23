@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FiMenu } from "react-icons/fi";
 import Logo from "../../assets/nova-logo.png";
 import { useDispatch, useSelector } from "react-redux";
+import { all_user_transactions, user_account_balance_amount, user_last_deposit, user_last_deposit_amount, user_last_withdrawal_amount, user_pending_deposit_amount, user_pending_withdrwawal_amount, user_total_deposit_amount, user_total_withdrawal_amount } from "../../redux/transactions/transactionSlice";
+import { userlogout } from "../../redux/user/userService";
+import { current_signed_in_user, current_user_login_status, user_role } from "../../redux/user/userSlice";
 
 
 
@@ -14,7 +17,29 @@ const activeLink = ({ isActive }) => (isActive ? "activeLink" : "darkLink");
 const Header = () => {
   const [navigation, setNavigation] = useState(false);
   const toggleNav = () => setNavigation(!navigation);
+  const dispatch = useDispatch()
   const userInfo = useSelector(state => state.persistedReducer.auth)
+  const navigate = useNavigate()
+
+
+  const logout = async () => {
+    await userlogout()
+    localStorage.removeItem("persist:root")
+    dispatch(current_signed_in_user(null))
+    dispatch(user_role(""))
+    dispatch(current_user_login_status(false))
+    dispatch(user_account_balance_amount(0))
+    dispatch(user_total_deposit_amount(0))
+    dispatch(user_pending_deposit_amount(0))
+    dispatch(user_last_deposit_amount(0))
+    dispatch(user_last_deposit(null))
+    dispatch(user_total_withdrawal_amount(0))
+    dispatch(user_pending_withdrwawal_amount(0))
+    dispatch(user_last_withdrawal_amount(0))
+    dispatch(all_user_transactions([]))
+    navigate("/");
+
+  }
 
 
 
@@ -61,7 +86,7 @@ const Header = () => {
             >
               DASHBOARD
             </NavLink>
-            <button className="LogOut-btn">
+            <button className="LogOut-btn" onClick={logout}>
               LOGOUT
             </button>
           </>

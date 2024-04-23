@@ -2,8 +2,15 @@ import React from "react";
 import MainLayout from "../components/layout/MainLayout";
 import styled from "styled-components";
 import Time from "../components/Time";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const MyDeposits = () => {
+  const navigate = useNavigate()
+  const allTransaction = useSelector((state) => state.persistedReducer.transactions);
+  console.log(allTransaction?.withdrawals)
+  let deposits = allTransaction.deposits
+
   return (
     <MainLayout>
 
@@ -22,23 +29,33 @@ const MyDeposits = () => {
                 {/* <p className="btc-address">Wallet Address</p> */}
               </div>
               {/* ------------------------------------- */}
-              <div className="table-body the-row one" >
-                <p className="amount">
-                  $ 200
-                </p>
-                <p className="timing">400</p>
-                <p className="status">
-                  <span className="span-processing">Processing</span>
-                  <span className="span-success">Successful</span>
-                </p>
-                {/* <p className="btc-address">Wallet Address</p> */}
-              </div>
-              <div className="table-body the-row one no-transaction">
+              {!deposits || deposits.length === 0 ? <div className="table-body the-row one no-transaction">
                 <p className="text-danger">NO DEPOSIT MADE</p>
-              </div>
+              </div> : (
+                <>
+                  {deposits.map(depo => (
+                    <div className="table-body the-row one" key={depo._id}>
+                      <p className="amount">
+                        $ {depo?.amount.toLocaleString("en-US")}
+                      </p>
+                      <p className="timing">{depo?.created}</p>
+                      <p className="status">
+                        {depo?.isProcessing === false ? (
+                          <span className="span-processing">Processing</span>
+                        ) : (
+                          <span className="span-success">Successful</span>
+                        )}
+                      </p>
+                      {/* <p className="btc-address">Wallet Address</p> */}
+                    </div>
+                  ))}
+                </>
+              )}
+
+
             </div>
           </div>
-          <button >GO BACK</button>
+          <button onClick={() => navigate(-1)}>GO BACK</button>
         </div>
       </MyDepositSection>
     </MainLayout>

@@ -52,7 +52,7 @@ const Dashboard = () => {
 
 
 
-  // //Account Balance ===========================================================
+  // All Transactions from Redux ===========================================================
   const allTransaction = useSelector((state) => state.persistedReducer.transactions);
 
 

@@ -12,6 +12,8 @@ const Time = () => {
   const [lastDepos, setLastDepos] = useState('')
   const userAuth = useSelector((state) => state.persistedReducer.auth);
   const dispatch = useDispatch();
+  const allTransaction = useSelector((state) => state.persistedReducer.transactions);
+
 
   useEffect(() => {
     async function userlastDeposit() {
@@ -21,9 +23,9 @@ const Time = () => {
     userlastDeposit();
   }, [])
 
-  let lastDepoDate = lastDepos?.createdAt;
+  let lastDepoDate = allTransaction?.theUserLastDeposit?.createdAt;
 
-  let investmentPlan = lastDepos?.plan;
+  let investmentPlan = allTransaction?.theUserLastDeposit?.plan;
   let SilverPlanFigure = 3;
   let GoldPlanFigure = 5;
   let PlantinumPlanFigure = 5;

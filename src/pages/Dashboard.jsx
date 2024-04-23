@@ -16,9 +16,7 @@ import { all_user_transactions, user_account_balance_amount, user_last_deposit, 
 
 const Dashboard = () => {
   const dispatch = useDispatch()
-  const [lastDepos, setLastDepos] = useState('')
   const [cantWithdraw, setCantWithdraw] = useState(false);
-  const [data, setdata] = useState(null)
 
 
 
@@ -35,7 +33,6 @@ const Dashboard = () => {
       const userLastWithdrawalAmount = await getUserLastWithdrawal()
       const getAlltransactions = await getAllUsertransactions()
       const lastDeposit = await theUserLastDeposit()
-      setLastDepos(lastDeposit)
 
 
 

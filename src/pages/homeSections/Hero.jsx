@@ -8,10 +8,11 @@ import MobileSlider2 from "../../assets/mobile-Slider2.png";
 import MobileSlider3 from "../../assets/mobile-Slider3.png";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Hero = () => {
   const navigate = useNavigate();
-  const userData = JSON.parse(localStorage.getItem("name"));
+  const userData = useSelector(state => state.persistedReducer.auth)
 
 
   return (
@@ -24,7 +25,7 @@ const Hero = () => {
           embrace innovation to help our clients navigate the uncertainty of
           capital markets
         </p>
-        {userData ? (
+        {userData?.currentUser?.fullname ? (
           <button onClick={() => navigate("/about")}>ABOUT US</button>
         ) : (
           <button onClick={() => navigate("/login")}>GET STARTED</button>

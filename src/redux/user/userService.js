@@ -140,3 +140,34 @@ export const userUpdateProfile = async (userData) => {
     return toast.error(message);
   }
 };
+
+
+
+//User Change Password
+export const userChangePassword = async (userData) => {
+  try {
+    const response = await axios.put(
+      `${backend_Url}user/userchangepassword`,
+      userData,
+      axiosConfig,
+      {
+        withCredentials: true,
+      }
+    );
+    if (
+      response.statusText === "OK" ||
+      response.status === 200 ||
+      response?.data?.success === true
+    ) {
+      toast.success(response?.data?.message);
+    }
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error?.data?.message ||
+      error.message ||
+      error.toString();
+    return toast.error(message);
+  }
+};
